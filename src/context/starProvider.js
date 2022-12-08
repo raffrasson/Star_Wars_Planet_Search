@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import StarContext from './starContext';
 
 export default function StarProvider({ children }) {
+  const columnFilter = document.getElementById('column');
   const [data, setData] = useState([{}]);
   const [search, setSearch] = useState('');
   const [filteredData, setFilteredData] = useState([{}]);
@@ -45,18 +46,42 @@ export default function StarProvider({ children }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
 
-  // function nameFilter(array) {
-  //   const filtered = array.filter((planet) => (planet.name.toLowerCase() // referência: https://stackoverflow.com/questions/42035717/js-filter-object-array-for-partial-matches/42035745
-  //     .includes(filter.filterByName.name.toLowerCase())));
-  //   console.log(filtered);
-  //   setData(filtered);
-  // }
-
   function searchInput(name) {
     setFilter({
       ...filter, filterByName: { name },
     });
   }
+
+  function setNumeric(column, comparison, value) {
+    setFilter({
+      ...filter,
+      filterByNumericValues: {
+        column,
+        comparison,
+        value,
+      },
+    });
+    columnFilter.childNodes.forEach((child) => {
+      if (child.value === column) {
+        child.remove();
+      }
+    });
+  }
+
+  useEffect(() => {
+    const { filterByNumericValues: { column, comparison, value } } = filter;
+    if (column !== '') {
+      const filteredInfo = data.filter((planet) => {
+        const planetValue = Number(planet[column]);
+        if (comparison === 'maior que') return planetValue > Number(value);
+        if (comparison === 'menor que') return planetValue < Number(value);
+        if (comparison === 'igual a') return planetValue === Number(value);
+        return false;
+      });
+      setFilteredData(filteredInfo);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter.filterByNumericValues]);
 
   const values = {
     data,
@@ -66,6 +91,7 @@ export default function StarProvider({ children }) {
     search,
     setSearch,
     searchInput,
+    setNumeric,
     filteredData,
   };
 

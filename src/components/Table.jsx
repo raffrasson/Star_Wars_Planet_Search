@@ -6,10 +6,8 @@ function Table() {
   const { data, filteredData, filter } = useContext(StarContext);
   const headers = Object.keys(data[0]);
   const planets = filter.filterByName.name === '' ? data : filteredData;
-  // const planets = filteredData.length > 0 ? Object.values(filteredData) : Object.values(data);
-  console.log(planets);
 
-  const rows = planets.map((planet) => headers.map((header) => planet[header]));
+  const rows = planets.map((planet) => headers.map((header) => planet[header])); // Auxílio de Marcello Alves
   return (
     <table>
       <thead>
@@ -25,12 +23,6 @@ function Table() {
             ))}
           </tr>
         ))}
-
-        {/* {planets.map((planet, i) => (
-          <tr key={ i }>
-            {Object.values(planets[i])
-              .map((header, index) => <td key={ index }>{header}</td>)}
-          </tr>))} */}
       </tbody>
     </table>
   );
